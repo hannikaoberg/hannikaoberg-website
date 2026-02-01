@@ -1,0 +1,59 @@
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hannikaberg.com</title>
+    <!-- Enkel styling -->
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+        h1 { color: #333; }
+        #messages { background: #f4f4f4; padding: 1rem; border-radius: 8px; }
+        .msg { border-bottom: 1px solid #ddd; padding: 0.5rem 0; }
+    </style>
+    <!-- Ladda in Supabase från internet -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <h1>Välkommen till Hannikaberg.com</h1>
+    <p>Detta är en enkel sida kopplad till Supabase.</p>
+    
+    <h3>Gästbok:</h3>
+    <div id="messages">Laddar meddelanden...</div>
+
+    <script>
+        // KONFIGURATION - Klistra in dina nycklar här
+        const supabaseUrl = 'https://njeygvqboralxuwmaavi.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qZXlndnFib3JhbHh1d21hYXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk5MzE0ODUsImV4cCI6MjA0NTUwNzQ4NX0.zbi8rUyVqyzN1knPmVvEUIGSBEjTJWgCdhvg-A3lW1I'
+        
+        // Starta Supabase
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey)
+
+        async function getMessages() {
+            // Hämta data från tabellen 'guestbook'
+            const { data, error } = await _supabase
+                .from('guestbook')
+                .select('*')
+            
+            const list = document.getElementById('messages');
+            
+            if (error) {
+                console.log(error);
+                list.innerHTML = "Kunde inte ladda meddelanden.";
+            } else {
+                list.innerHTML = ""; // Rensa "Laddar..."
+                data.forEach(rad => {
+                    const div = document.createElement('div');
+                    div.className = "msg";
+                    div.textContent = rad.message; // Visar texten från databasen
+                    list.appendChild(div);
+                });
+            }
+        }
+
+        // Kör funktionen när sidan laddas
+        getMessages();
+    </script>
+
+</body>
+</html>
